@@ -15,7 +15,7 @@ The game will be a side-scrolling platformer where the player navigates through 
 ## How To Run
 1. Clone the repository:
 ```
-https://github.com/marena2004/CoinDash.git
+git clone https://github.com/marena2004/CoinDash.git
 ```
 2. Navigate to the project directory:
 ```
