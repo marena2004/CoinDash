@@ -21,7 +21,12 @@ https://github.com/marena2004/CoinDash.git
 ```
 cd CoinDash/Code
 ```
-3. Create and activate a virtual environment:
+3. Create virtual environment using this command:
+```
+python -m venv env
+```
+4. Activate the virtual environment:
+On Linux or MacOS
 ```
 source venv/bin/activate
 ```
@@ -29,11 +34,11 @@ On Windows, use:
 ```
 venv\Scripts\activate
 ```
-4. Install the required dependencies:
+5. Install the required dependencies:
 ```
 pip install -r requirements.txt
 ```
-5. Run the application:
+6. Run the application:
 ```
 python main.py
 ```
