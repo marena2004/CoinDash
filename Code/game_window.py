@@ -12,7 +12,7 @@ FPS = 60
 class GameWindow:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption("Side-Scrolling Platformer")
+        pygame.display.set_caption("CoinDash")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont(None, 30)
 
