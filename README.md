@@ -15,25 +15,30 @@ The game will be a side-scrolling platformer where the player navigates through 
 ## How To Run
 1. Clone the repository:
 ```
-https://github.com/marena2004/CoinDash.git
+git clone https://github.com/marena2004/CoinDash.git
 ```
 2. Navigate to the project directory:
 ```
-cd CoinDash
+cd CoinDash/Code
 ```
-3. Create and activate a virtual environment:
+3. Create virtual environment using this command:
 ```
-source venv/bin/activate
+python -m venv env
+```
+4. Activate the virtual environment:
+On Linux or MacOS
+```
+source env/bin/activate
 ```
 On Windows, use:
 ```
-venv\Scripts\activate
+env\Scripts\activate
 ```
-4. Install the required dependencies:
+5. Install the required dependencies:
 ```
 pip install -r requirements.txt
 ```
-5. Run the application:
+6. Run the application:
 ```
 python main.py
 ```

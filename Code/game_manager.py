@@ -3,6 +3,7 @@ from platform import Platform
 from coin import Coin
 from obstacle import Obstacle
 
+
 class GameManager:
     def __init__(self):
         self.platforms = []
