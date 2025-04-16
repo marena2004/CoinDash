@@ -32,7 +32,7 @@ source venv/bin/activate
 ```
 On Windows, use:
 ```
-venv\Scripts\activate
+env\Scripts\activate
 ```
 5. Install the required dependencies:
 ```
