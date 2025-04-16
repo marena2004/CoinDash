@@ -19,7 +19,7 @@ https://github.com/marena2004/CoinDash.git
 ```
 2. Navigate to the project directory:
 ```
-cd CoinDash
+cd CoinDash/Code
 ```
 3. Create and activate a virtual environment:
 ```
