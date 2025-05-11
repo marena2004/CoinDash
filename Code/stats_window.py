@@ -232,10 +232,6 @@ class StatsWindow:
                   text=f"Left Behind: {left_behind_deaths} ({left_behind_deaths / total_sessions * 100:.1f}% of sessions)",
                   font=("Arial", 12)).pack(anchor="w", padx=10, pady=5)
 
-        # Button to refresh statistics
-        refresh_button = ttk.Button(scrollable_frame, text="Refresh Data", command=self.refresh_data)
-        refresh_button.pack(pady=10)
-
     def setup_sessions_tab(self):
         """Setup the sessions tab with detailed session data"""
         # Create treeview for sessions
@@ -551,26 +547,6 @@ class StatsWindow:
         canvas3 = FigureCanvasTkAgg(fig3, master=combined_frame)
         canvas3.draw()
         canvas3.get_tk_widget().pack(fill="both", expand=True)
-
-    def refresh_data(self):
-        """Refresh the data and update all views"""
-        self.load_data()
-
-        # Clear existing widgets
-        for widget in self.overview_tab.winfo_children():
-            widget.destroy()
-
-        for widget in self.graphs_tab.winfo_children():
-            widget.destroy()
-
-        for widget in self.detailed_graphs_tab.winfo_children():
-            widget.destroy()
-
-        # Rebuild the tabs
-        self.setup_overview_tab()
-        self.populate_sessions_table()
-        self.setup_primary_graphs_tab()
-        self.setup_detailed_graphs_tab()
 
     def on_close(self):
         """Handle window close event"""

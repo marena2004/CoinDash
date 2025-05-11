@@ -6,10 +6,6 @@ from platform_obj import Platform
 from coin import Coin
 from obstacle import Obstacle
 from game_manager import GameManager
-import csv
-import os
-from datetime import datetime
-from stats_window import StatsWindow
 import math
 
 

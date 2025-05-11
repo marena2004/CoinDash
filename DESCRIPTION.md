@@ -90,3 +90,5 @@ Graphs showing player performance.
 3. Scatter Plot: Comparing jump frequency across multiple sessions to analyze difficulty.
 4. Histogram: analyzing frequency distributions, such as time taken per session.
 5. Tables: displaying collected data, including death causes and completion time statistics.
+
+![class_diagram.png](class_diagram.png)
