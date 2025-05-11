@@ -1,23 +1,23 @@
 import pygame
 
 
-class Obstacle:
+class Platform:
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.color = (255, 0, 0)  # Red color for obstacles
+        self.color = (0, 128, 0)  # Green color
 
     def get_rect(self):
         """Return pygame Rect for collision detection"""
         return pygame.Rect(self.x, self.y, self.width, self.height)
 
     def draw(self, screen, camera_offset_x):
-        """Draw the obstacle on screen with camera offset"""
+        """Draw the platform on screen with camera offset"""
         # Apply camera offset for scrolling
         draw_x = self.x - camera_offset_x
 
-        # Only draw if on screen
-        if -self.width <= draw_x <= pygame.display.get_surface().get_width():
+        # Only draw if platform is (partially) on screen
+        if draw_x + self.width >= 0 and draw_x <= screen.get_width():
             pygame.draw.rect(screen, self.color, (draw_x, self.y, self.width, self.height))

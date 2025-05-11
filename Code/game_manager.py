@@ -1,48 +1,134 @@
-import random
-from platform import Platform
-from coin import Coin
-from obstacle import Obstacle
+import pygame
+import time
+import csv
+import os
+from datetime import datetime
 
 
 class GameManager:
     def __init__(self):
-        self.platforms = []
-        self.coins = []
-        self.obstacles = []
-        self.last_platform_x = 600
-        self.last_platform_y = 500
+        self.score = 0
+        self.game_over = False
+        self.game_completed = False
+        self.death_count = 0
+        self.start_time = pygame.time.get_ticks()
+        self.completion_time = 0
+        self.death_causes = {
+            'falling': 0,
+            'obstacle': 0,
+            'left_behind': 0  # New death cause for player getting left behind by scrolling
+        }
+        self.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
+        self.data_points = []
+        self.last_data_collection = 0
+        self.data_collection_interval = 10000  # 10 seconds in milliseconds
 
-    def generate_initial_ground(self):
-        for i in range(0, 1200, 300):
-            self.platforms.append(Platform([i, 550], 300, 50))
+        # Ensure stats directory exists
+        if not os.path.exists('stats'):
+            os.makedirs('stats')
 
-    def generate_platforms(self):
-        for _ in range(3):
-            width = random.randint(100, 200)
-            gap = random.randint(50, 150)
-            new_x = self.last_platform_x + gap + width
-            dy = random.randint(-80, 80)
-            new_y = min(max(self.last_platform_y + dy, 200), 520)
-            self.platforms.append(Platform([new_x, new_y], width, 20))
-            ground_width = random.randint(300, 400)
-            self.platforms.append(Platform([new_x, 550], ground_width, 50))
-            if random.random() < 0.7:
-                self.coins.append(Coin([new_x + width // 2, new_y - 30]))
-            if random.random() < 0.3:
-                self.obstacles.append(Obstacle([new_x + width // 2, new_y - 20], 30, 20))
-            self.last_platform_x, self.last_platform_y = new_x, new_y
+        # Create stats file if it doesn't exist
+        if not os.path.exists('stats/game_stats.csv'):
+            with open('stats/game_stats.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['session_id', 'timestamp', 'distance_traveled',
+                                 'coins_collected', 'jump_count', 'score',
+                                 'completion_time', 'death_cause'])
 
-    def generate_ground(self):
-        last_ground_x = max(p.position[0] + p.width for p in self.platforms if p.position[1] == 550)
-        while last_ground_x < 1200:
-            if random.random() < 0.1:
-                last_ground_x += random.randint(80, 150)
-            else:
-                width = random.randint(200, 300)
-                self.platforms.append(Platform([last_ground_x, 550], width, 50))
-                last_ground_x += width
+    def start_timer(self):
+        """Start the game timer"""
+        self.start_time = time.time()
 
-    def clean_up(self):
-        self.platforms = [p for p in self.platforms if p.position[0] + p.width > -200]
-        self.coins = [c for c in self.coins if c.position[0] > -100]
-        self.obstacles = [o for o in self.obstacles if o.position[0] + o.width > -100]
+    def end_timer(self):
+        """End the game timer and calculate completion time"""
+        if self.start_time:
+            self.completion_time = time.time() - self.start_time
+            return self.completion_time
+        return 0
+
+    def update_score(self, value):
+        """Update the game score"""
+        self.score += value
+
+    def check_game_over(self, player, screen_height, obstacles=None):
+        """Check if the game is over"""
+        # Check if player fell off the screen
+        if player.y > screen_height:
+            self.game_over = True
+            self.death_causes['falling'] += 1
+            return True
+
+        # Check for collision with obstacles if provided
+        if obstacles:
+            for obstacle in obstacles:
+                if player.get_rect().colliderect(obstacle.get_rect()):
+                    self.game_over = True
+                    self.death_causes['obstacle'] += 1
+                    return True
+
+        return False
+
+    def collect_data_point(self, player):
+        """Collect a data point for statistics"""
+        current_time = pygame.time.get_ticks()
+
+        # Collect data at regular intervals or when requested
+        if current_time - self.last_data_collection >= self.data_collection_interval:
+            self.last_data_collection = current_time
+
+            data_point = {
+                'session_id': self.session_id,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'distance_traveled': player.get_distance(),
+                'coins_collected': player.get_coins_collected(),
+                'jump_count': player.get_jump_count(),
+                'score': self.score,
+                'completion_time': self.completion_time if self.game_completed else 0,
+                'death_cause': ''
+            }
+
+            self.data_points.append(data_point)
+
+    def save_game_stats(self, player):
+        """Save game statistics to CSV file"""
+        # Add final data point
+        final_data = {
+            'session_id': self.session_id,
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'distance_traveled': player.get_distance(),
+            'coins_collected': player.get_coins_collected(),
+            'jump_count': player.get_jump_count(),
+            'score': self.score,
+            'completion_time': self.completion_time,
+            'death_cause': next((cause for cause, count in self.death_causes.items()
+                                 if count > 0), '')
+        }
+
+        # Write to CSV
+        with open('stats/game_stats.csv', 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([
+                final_data['session_id'],
+                final_data['timestamp'],
+                final_data['distance_traveled'],
+                final_data['coins_collected'],
+                final_data['jump_count'],
+                final_data['score'],
+                final_data['completion_time'],
+                final_data['death_cause']
+            ])
+
+        # Also save intermediate data points
+        for data_point in self.data_points:
+            with open('stats/game_stats.csv', 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([
+                    data_point['session_id'],
+                    data_point['timestamp'],
+                    data_point['distance_traveled'],
+                    data_point['coins_collected'],
+                    data_point['jump_count'],
+                    data_point['score'],
+                    data_point['completion_time'],
+                    data_point['death_cause']
+                ])
