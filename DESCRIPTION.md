@@ -92,3 +92,5 @@ Graphs showing player performance.
 5. Tables: displaying collected data, including death causes and completion time statistics.
 
 ![class_diagram.png](class_diagram.png)
+
+[Presentation](https://youtu.be/feAJWRtttz8?si=7hixMbUC3HD2o4Ba)
